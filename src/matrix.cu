@@ -29,6 +29,16 @@ SCMatrix::~SCMatrix()
 	cudaFree(data_);
 }
 
+float& SCMatrix::operator()(const size_t row, const size_t col)
+{
+	return data_[row * width + col];
+}
+
+float SCMatrix::operator()(const size_t row, const size_t col) const
+{
+	return data_[row * width + col];
+}
+
 SCMatrix SCMatrix::operator*(const SCMatrix& rhs) const
 {
 	const size_t out_height = this->height;

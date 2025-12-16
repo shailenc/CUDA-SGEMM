@@ -19,6 +19,9 @@ public:
 	SCMatrix(size_t input_height, size_t input_width);
 	~SCMatrix();
 
+	float& operator()(const size_t row, const size_t col);
+	float operator()(const size_t row, const size_t col) const;
+
 	SCMatrix operator*(const SCMatrix& rhs) const;
 
 private:
