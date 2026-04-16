@@ -1,43 +1,46 @@
 ﻿cmake_minimum_required(VERSION 3.19)
-project(CUDA_MATRIX LANGUAGES CXX CUDA)
+project(cuda_gemm LANGUAGES CXX CUDA)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CUDA_ARCHITECTURES 86)
 
-# (I'm using my 3080, compute capability 8.6)
-# see https://developer.nvidia.com/cuda/gpus for other gpus
-set(CUDA_COMPUTE_CAPABILITY 86)
+find_package(CUDAToolkit REQUIRED)
 
-set(PROJECT_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/src)
+set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
+set(KERNEL_DIR ${SRC_DIR}/kernels)
 
-# cuda debug flags
-add_compile_options(
-    $<$<AND:$<CONFIG:Debug>,$<COMPILE_LANGUAGE:CUDA>>:-G>
-    $<$<AND:$<CONFIG:Debug>,$<COMPILE_LANGUAGE:CUDA>>:-src-in-ptx>
+# -------------------------
+# Core (dispatcher only)
+# -------------------------
+set(CORE_SRC
+    ${SRC_DIR}/sgemm_dispatcher.cu
 )
 
-file(GLOB SRC
-    "${PROJECT_INCLUDE_DIR}/*.cu"
-    "${PROJECT_INCLUDE_DIR}/*.cpp"
+add_library(core STATIC ${CORE_SRC})
+target_include_directories(core PUBLIC ${SRC_DIR})
+
+# -------------------------
+# Kernels
+# -------------------------
+set(KERNEL_SRC
+    ${KERNEL_DIR}/cublas.cu
+    ${KERNEL_DIR}/naive.cu
 )
 
-file(GLOB HEADERS
-    "${PROJECT_INCLUDE_DIR}/*.h"
-    "${PROJECT_INCLUDE_DIR}/*.cuh"
+add_library(kernels STATIC
+    ${KERNEL_SRC}
 )
 
-add_executable(matrix ${SRC})
+target_include_directories(kernels PUBLIC ${SRC_DIR})
 
-target_sources(matrix
-    PRIVATE
-        ${SRC}
-    PUBLIC FILE_SET HEADERS
-        BASE_DIRS ${PROJECT_INCLUDE_DIR}
-        FILES ${HEADERS}
+# -------------------------
+# Executable
+# -------------------------
+add_executable(bench
+    ${SRC_DIR}/main.cpp
 )
 
-source_group("Header Files" FILES ${HEADERS})
+target_include_directories(bench PRIVATE ${SRC_DIR})
 
-target_include_directories(matrix PRIVATE ${PROJECT_INCLUDE_DIR})
-
-set_target_properties(matrix PROPERTIES CUDA_ARCHITECTURES ${CUDA_COMPUTE_CAPABILITY})
+target_link_libraries(bench PRIVATE core kernels CUDA::cudart)
+target_link_libraries(core PUBLIC CUDA::cublas)

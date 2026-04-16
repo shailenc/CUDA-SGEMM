@@ -1,6 +1,5 @@
 #pragma once
 
-#include <type_traits>
 #include <cuda_runtime.h>
 
 /*
@@ -8,23 +7,24 @@
 
 	This matrix is row major, and (for now) only supports floats.
 */
-class SCMatrix
+struct SCMatrix
 {
-public:
+	// TODO: support other types than float?
+	SCMatrix(size_t input_height, size_t input_width)
+	: height(input_height)
+	, width(input_width)
+	, num_elements(input_height*input_width)
+	{
+		cudaMalloc(&data_, num_elements * sizeof(float));
+	}
 
-	const size_t height;
-	const size_t width;
+	~SCMatrix()
+	{
+		cudaFree(data_);
+	}
+
+
+	const size_t height, width;
 	const size_t num_elements;
-
-	SCMatrix(size_t input_height, size_t input_width);
-	~SCMatrix();
-
-	float& operator()(const size_t row, const size_t col);
-	float operator()(const size_t row, const size_t col) const;
-
-	SCMatrix operator*(const SCMatrix& rhs) const;
-
-private:
-
 	float* data_ = nullptr;
 };
