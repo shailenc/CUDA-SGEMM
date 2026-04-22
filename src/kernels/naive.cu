@@ -2,6 +2,10 @@
 
 #define CEIL_DIV(a, b) (((a) + (b) - 1) / (b))
 
+/*
+	thread x maps to matrix row numbers,
+	thread y maps to matrix column numbers.
+*/
 __global__ void sgemm_naive
 (
 	int M, int N, int K, float alpha,

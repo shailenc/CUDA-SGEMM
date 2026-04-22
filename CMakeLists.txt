@@ -25,6 +25,7 @@ target_include_directories(core PUBLIC ${SRC_DIR})
 set(KERNEL_SRC
     ${KERNEL_DIR}/cublas.cu
     ${KERNEL_DIR}/naive.cu
+    ${KERNEL_DIR}/global_coalescing.cu
 )
 
 add_library(kernels STATIC

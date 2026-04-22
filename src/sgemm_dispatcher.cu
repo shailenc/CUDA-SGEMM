@@ -11,5 +11,9 @@ void launch_sgemm(SgemmKernel k, const SgemmParams& p)
         case SgemmKernel::Naive:
             sgemm_naive(p);
             break;
+
+        case SgemmKernel::GlobalCoalescing:
+            sgemm_global_coalescing(p);
+            break;
     }
 }

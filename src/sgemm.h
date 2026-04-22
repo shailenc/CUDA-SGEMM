@@ -5,7 +5,8 @@
 enum class SgemmKernel
 {
     CuBLAS,
-    Naive
+    Naive,
+    GlobalCoalescing
 };
 
 struct SgemmParams
@@ -22,3 +23,4 @@ void launch_sgemm(SgemmKernel k, const SgemmParams& p);
 
 void sgemm_cublas(const SgemmParams& p);
 void sgemm_naive(const SgemmParams& p);
+void sgemm_global_coalescing(const SgemmParams& p);
