@@ -9,22 +9,33 @@
 */
 struct SCMatrix
 {
-	// TODO: support other types than float?
-	SCMatrix(size_t input_height, size_t input_width)
-	: height(input_height)
-	, width(input_width)
-	, num_elements(input_height*input_width)
-	{
-		cudaMalloc(&data_, num_elements * sizeof(float));
-	}
+    SCMatrix(size_t h, size_t w)
+        : height(h),
+          width(w),
+          num_elements(h * w)
+    {
+        cudaMalloc(&data_, num_elements * sizeof(float));
+    }
 
-	~SCMatrix()
-	{
-		cudaFree(data_);
-	}
+    ~SCMatrix()
+    {
+        if (data_)
+            cudaFree(data_);
+    }
 
+    SCMatrix(const SCMatrix&) = delete;
+    SCMatrix& operator=(const SCMatrix&) = delete;
 
-	const size_t height, width;
-	const size_t num_elements;
-	float* data_ = nullptr;
+    SCMatrix(SCMatrix&& other) noexcept
+        : height(other.height),
+          width(other.width),
+          num_elements(other.num_elements),
+          data_(other.data_)
+    {
+        other.data_ = nullptr;
+    }
+
+    float* data_ = nullptr;
+
+    const size_t height, width, num_elements;
 };

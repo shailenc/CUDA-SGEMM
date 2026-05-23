@@ -26,6 +26,8 @@ set(KERNEL_SRC
     ${KERNEL_DIR}/cublas.cu
     ${KERNEL_DIR}/naive.cu
     ${KERNEL_DIR}/global_coalescing.cu
+    ${KERNEL_DIR}/smem.cu
+    ${KERNEL_DIR}/blocktile.cu
 )
 
 add_library(kernels STATIC

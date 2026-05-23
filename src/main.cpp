@@ -6,8 +6,8 @@
 
 static float benchmark_sgemm(SgemmKernel k,
                              const SgemmParams& p,
-                             int warmup = 5,
-                             int runs = 20)
+                             int warmup = 10,
+                             int runs = 50)
 {
     for (int i = 0; i < warmup; ++i)
         launch_sgemm(k, p);
@@ -118,7 +118,9 @@ int main()
     std::vector<SgemmKernel> kernels = {
         SgemmKernel::CuBLAS,
         SgemmKernel::Naive,
-        SgemmKernel::GlobalCoalescing
+        SgemmKernel::GlobalCoalescing,
+        SgemmKernel::SMEM,
+        SgemmKernel::Blocktile
     };
 
     for (SgemmKernel k: kernels)
