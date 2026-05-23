@@ -7,7 +7,7 @@
 static float benchmark_sgemm(SgemmKernel k,
                              const SgemmParams& p,
                              int warmup = 10,
-                             int runs = 50)
+                             int runs = 100)
 {
     for (int i = 0; i < warmup; ++i)
         launch_sgemm(k, p);
