@@ -1,4 +1,3 @@
-mkdir build
-cd build
-cmake .. -G "Visual Studio 17 2022"
-cmake --build .
+This repo contains the several iterations of SGEMM CUDA kernels that I've written as I've learned about GPU architecture and optimization techniques.
+
+I've managed to reach ~42% of the speed of NVIDIA's CuBLAS with my most recent iteration (see `blocktile.cu`). That being said, there is still *far* more to learn and far more to optimize as well (immediate thoughts: improve vectorization, warp-level tiling/blocking).
